@@ -7,6 +7,6 @@ Settings[Keys.Host] = "yourwebsite.com";
 Settings[BlogKeys.Title] = "Logo";
 Settings[BlogKeys.Description] = "Site description";
 Settings[Keys.LinksUseHttps] = true;
-Settings[BlogKeys.IndexPageSize] = true;
+Settings[BlogKeys.IndexPageSize] = 5;
 
 // Add any pipeline customizations here
