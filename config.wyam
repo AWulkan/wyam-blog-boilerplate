@@ -2,9 +2,11 @@
 #theme theme
 
 // Customize your settings and add new ones here
+// Link to settings: https://wyam.io/recipes/blog/settings
 Settings[Keys.Host] = "yourwebsite.com";
 Settings[BlogKeys.Title] = "Logo";
 Settings[BlogKeys.Description] = "Site description";
 Settings[Keys.LinksUseHttps] = true;
+Settings[BlogKeys.IndexPageSize] = true;
 
 // Add any pipeline customizations here
