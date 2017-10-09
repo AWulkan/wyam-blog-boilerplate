@@ -1,0 +1,84 @@
+@{
+    string Title = Model.WithoutSettings.String(BlogKeys.Title);
+    string PageTitle = Context.String(BlogKeys.Title) + (string.IsNullOrWhiteSpace(Title) ? string.Empty : " - " + Title);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <!-- <title>@Model.WithoutSettings.String(BlogKeys.Title)</title> -->
+    <title>@PageTitle</title>
+    <meta name="description" content="@Context.String(BlogKeys.Description)" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @if (Context.String(BlogKeys.RssPath) != null) {
+    <link type="application/rss+xml" rel="alternate" title="@Context.String(BlogKeys.Title)" href="@Context.GetLink(Context.String(BlogKeys.RssPath))" />
+    }
+    @if (Context.String(BlogKeys.AtomPath) != null) {
+    <link type="application/atom+xml" rel="alternate" title="@Context.String(BlogKeys.Title)" href="@Context.GetLink(Context.String(BlogKeys.AtomPath))" />
+    }
+
+    <link rel="shortcut icon" href="@Context.GetLink("/assets/img/favicon.ico")" type="image/x-icon">
+    <link rel="icon" href="@Context.GetLink("/assets/img/favicon.ico")" type="image/x-icon">
+
+    <link href="@Context.GetLink("/assets/css/style.css")" rel="stylesheet" />
+
+    <!-- social -->
+    <meta property="og:title" content="@PageTitle" />
+    @* <meta property="og:image" content="@Blog.Image" /> *@
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Context.GetLink(Model, true)" />
+</head>
+<body>
+    <!-- Logo -->
+    @if(Context.String(BlogKeys.Title) != null)
+    {
+        <a href="@Context.GetLink("/")">
+            <h2>@Context.String(BlogKeys.Title)</h2>
+        </a>
+    }
+
+    <!-- Pages -->
+    @{
+        List<Tuple<string, string>> pages = Context
+            .Documents[Blog.Pages]
+            .Where(x => x.Bool(BlogKeys.ShowInNavbar, true))
+            .Where(x => x.FilePath(Keys.RelativeFilePath)?.FullPath?.StartsWith("index") == (bool?)false)
+            .Select(x => Tuple.Create(x.WithoutSettings.String(Keys.Title), Context.GetLink(x)))
+            .Where(x => !string.IsNullOrEmpty(x.Item1))
+            .OrderBy(x => x.Item1)
+            .ToList();
+        if (Documents[Blog.Tags].Any())
+        {
+            pages.Insert(0, Tuple.Create("Tags", Context.GetLink("tags/index.html")));
+        }
+        if (Documents[Blog.BlogPosts].Any() && Context.Bool(BlogKeys.GenerateArchive))
+        {
+            pages.Insert(0, Tuple.Create("Archive", Context.GetLink(Context.String(BlogKeys.PostsPath) + "/index.html")));
+        }
+        foreach (Tuple<string, string> page in pages)
+        {
+            <li><a href="@page.Item2">@page.Item1</a></li>
+        }
+    }
+
+    <!-- Site description/intro -->
+    @if(Context.String(BlogKeys.Description) != null)
+    {
+        <h3>@Context.String(BlogKeys.Description)</h3>
+    }
+    @if(Context.String(BlogKeys.Intro) != null)
+    {
+        @if(Context.String(BlogKeys.Description) != null)
+        {
+            <hr>
+        }
+        <span>@Context.String(BlogKeys.Intro)</span>
+    }
+
+    @RenderBody()
+
+    <script href="@Context.GetLink("/assets/js/script.js")"></script>
+</body>
+</html>

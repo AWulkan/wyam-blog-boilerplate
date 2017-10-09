@@ -1,0 +1,10 @@
+#recipe Blog
+#theme theme
+
+// Customize your settings and add new ones here
+Settings[Keys.Host] = "yourwebsite.com";
+Settings[BlogKeys.Title] = "Logo";
+Settings[BlogKeys.Description] = "Site description";
+Settings[Keys.LinksUseHttps] = true;
+
+// Add any pipeline customizations here
